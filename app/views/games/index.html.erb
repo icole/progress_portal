@@ -1,0 +1,72 @@
+<div class="w-full max-w-4xl mx-auto p-8 space-y-4">
+  <h1 class="text-2xl font-bold mb-4">Game Schedule & Goals Tracker</h1>
+
+  <div data-controller="tabs">
+    <div class="grid grid-cols-3 mb-4 p-1 bg-slate-100 rounded-lg">
+      <% @games.each do |game| %>
+        <button
+          class="py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out <%= 'bg-white shadow' if game == @games.first %>"
+          data-tabs-target="tab"
+          data-action="click->tabs#change"
+          data-game-id="<%= game.id %>"
+        >
+          <%= game.name %>
+        </button>
+      <% end %>
+    </div>
+
+    <% @games.each do |game| %>
+      <div data-tabs-target="panel" data-game-id="<%= game.id %>" class="grid gap-4 <%= 'hidden' unless game == @games.first %>">
+        <!-- Schedule Card -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-4 py-2">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+              <%= lucide_icon('calendar') %>
+              Weekly Schedule
+            </h2>
+          </div>
+          <div class="p-4 space-y-4">
+            <% game.schedules.each do |schedule| %>
+              <div class="border-b last:border-0 pb-3">
+                <div class="flex items-center gap-2 font-medium">
+                 <%= lucide_icon('clock') %>
+                  <%= schedule.day %> (<%= schedule.time %>)
+                </div>
+                <ul class="mt-2 space-y-1 pl-6">
+                  <% schedule.tasks.each do |task| %>
+                    <li class="list-disc text-sm">
+                      <%= task %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Checkpoints Card -->
+        <div class="bg-white shadow rounded-lg">
+          <div class="px-4 py-2">
+            <h2 class="text-lg font-semibold flex items-center gap-2">
+              <%= lucide_icon('trophy') %>
+              Goals & Checkpoints
+            </h2>
+          </div>
+          <div class="p-4 space-y-3">
+            <% game.checkpoints.each do |checkpoint| %>
+              <div class="flex items-start gap-3 border-b last:border-0 pb-3">
+                <% if checkpoint.completed? %>
+                  <%= lucide_icon('circle-check') %>
+                <% end %>
+                <div>
+                  <div class="font-medium"><%= checkpoint.goal %></div>
+                  <div class="text-sm text-gray-500">Target: <%= checkpoint.deadline %></div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
